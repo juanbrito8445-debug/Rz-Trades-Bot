@@ -106,6 +106,6 @@ async def confirmar(ctx, id_conta: str):
 # --- RODAR O BOT ---
 # Substitua 'MTQ0MjYzNjQ0NTI1MTY3MDEwNg.G19xTo.MZsMyV7YcPh8JA_zlzNCHd2F4FadOl3EOWAhA0' pelo token que você copiou no passo 1.
 try:
-    bot.run('MTQ0MjYzNjQ0NTI1MTY3MDEwNg.G19xTo.MZsMyV7YcPh8JA_zlzNCHd2F4FadOl3EOWAhA0')
+    bot.run('MTQ0MjYzNjQ0NTI1MTY3MDEwNg.Gl5aCq.WcnetAfT20HkhRRICYdW7EgQOen9xxnt-xHnu0')
 except discord.errors.LoginFailure:
     print("ERRO: O token do bot está incorreto. Verifique se o token inserido é válido.")
