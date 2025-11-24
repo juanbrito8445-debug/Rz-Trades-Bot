@@ -1,0 +1,17 @@
+{
+    "conta_001": {
+        "login": "usuario123",
+        "senha": "senha_segura",
+        "status": "disponível"
+    },
+    "conta_002": {
+        "login": "usuario456",
+        "senha": "outra_senha",
+        "status": "disponível"
+    },
+    "conta_003": {
+        "login": "usuario789",
+        "senha": "mais_uma_senha",
+        "status": "disponível"
+    }
+}
