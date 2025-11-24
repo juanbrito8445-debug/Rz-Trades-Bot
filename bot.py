@@ -1,3 +1,39 @@
+import os
+import discord 
+from discord.ext import commands
+import asyncio 
+import json # <--- ADICIONE ESTA LINHA
+
+# --- FUNÇÕES DE PERSISTÊNCIA ---
+
+def carregar_estoque():
+    """Carrega o estoque do arquivo JSON."""
+    try:
+        # Tenta abrir e ler o arquivo
+        with open('estoque.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print("AVISO: O arquivo estoque.json não foi encontrado. Usando estoque vazio.")
+        return {}
+    except json.JSONDecodeError:
+        print("ERRO: O arquivo estoque.json está corrompido.")
+        return {}
+
+def salvar_estoque(estoque_dados):
+    """Salva o estoque no arquivo JSON."""
+    try:
+        with open('estoque.json', 'w', encoding='utf-8') as f:
+            # Salva o dicionário com indentação para facilitar a leitura humana
+            json.dump(estoque_dados, f, indent=4, ensure_ascii=False)
+    except Exception as e:
+        print(f"ERRO ao salvar o estoque: {e}")
+
+# --- CONFIGURAÇÃO INICIAL ---
+
+# Carrega o estoque do arquivo assim que o bot iniciar
+ESTOQUE = carregar_estoque() 
+
+# ... (o resto do seu código de intents e bot continua aqui)
 # bot.py
 
 import discord
@@ -28,6 +64,22 @@ async def on_ready():
 # --- COMANDO DE CRIAÇÃO DE TICKET (!comprar) ---
 @bot.command()
 async def comprar(ctx):
+    # DENTRO da função 'comprar(ctx)':
+
+# ...
+# 3. Resposta Automática no Ticket
+# Lista apenas as contas disponíveis
+contas_disponiveis = [
+    id_conta for id_conta, dados in ESTOQUE.items() if dados["status"] == "disponível"
+]
+estoque_listado = ', '.join(contas_disponiveis) if contas_disponiveis else "NENHUMA"
+
+await ticket_channel.send(
+    f"Bem-vindo(a), {ctx.author.mention}! **Seu ticket de compra foi criado.**\n"
+    "Por favor, envie o comprovante de pagamento e informe qual conta deseja.\n"
+    f"Nosso estoque atual é: **{estoque_listado}**." # <--- LINHA ATUALIZADA
+)
+# ...
     """Cria um canal privado (ticket) para iniciar uma compra."""
     # Evita que o comando seja usado fora de um canal de texto
     if not isinstance(ctx.channel, discord.TextChannel):
@@ -74,6 +126,17 @@ async def comprar(ctx):
 @bot.command()
 @commands.has_permissions(administrator=True) # Apenas administradores podem usar
 async def confirmar(ctx, id_conta: str):
+    # DENTRO da função 'confirmar(ctx, id_conta)':
+
+# ...
+# 2. Atualiza o Status
+ESTOQUE[id_conta]["status"] = "vendido"
+
+# SALVA A MUDANÇA NO ARQUIVO JSON! <--- ADICIONE ESTAS DUAS LINHAS
+salvar_estoque(ESTOQUE) 
+
+# 3. Fechamento do Ticket
+# ...
     """Comando para administradores confirmarem o pagamento e enviarem a conta."""
 
     if id_conta not in ESTOQUE:
